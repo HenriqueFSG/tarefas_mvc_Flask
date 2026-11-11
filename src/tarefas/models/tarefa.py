@@ -1,10 +1,12 @@
 from datetime import datetime
+from shutil import which
 
 from tarefas.models.database import Database
 
 
 class Tarefa:
-    """Provê métodos para armazenar, recuperar e processar os dados das 
+    """
+    Provê métodos para armazenar, recuperar e processar os dados das 
     tarefas criadas a partir do formulário principal.
     """
     def __init__(self, titulo, id = None, data_conclusao = None):
@@ -16,16 +18,48 @@ class Tarefa:
     def salvarTarefa(self):
         """Salva a tarefa no banco de dados."""
 
-        sql = 'INSERT INTO tarefa (titulo_tarefa, data_conclusao) VALUES (%s, %s)'
+        sql = 'INSERT INTO tarefas (titulo_tarefa, data_conclusao) VALUES (%s, %s)'
         params = (self.titulo, self.data_conclusao) # protege contra SQL
 
 
         # Gerenciador de contexto
+        # Acessa os métodos __enter__ e __exit__ da classe
         with Database() as db:
             db.executar(sql, params)
 
+    @staticmethod 
+    def listarTarefas() -> list:
+        """Retorna uma lista com todas as tarefas cadastradas."""
+
+        sql = '''SELECT id_tarefa,
+        titulo_tarefa,
+        data_conclusao 
+        FROM tarefas LIMIT 100;'''
+        with Database() as db:
+            tarefas_banco = db.executar(sql)
+
+        return tarefas_banco if tarefas_banco else []
+
+    @staticmethod
+    def apagarTarefa():
+        sql = '''DELETE FROM tarefas WHERE id_tarefa = %s;'''
+
+        with Database() as db:
+            db.executar(sql)
+
+
+
+
+
+
+
+
+
+
+
+
 # Área 51 (testes)
-tarefa = Tarefa('Minha nova tarefa')
-tarefa.salvarTarefa()
+# tarefa = Tarefa('Minha nova tarefa')
+# tarefa.salvarTarefa()
 
         

@@ -77,6 +77,12 @@ class Database:
         return self
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.desconectar()
+
+"""
+Definição do caminho absoluto até o arquivo de script SQL que será
+executado para criar o banco de dados na primeira vez que a aplicação 
+for utilizada. Esse caminho não depende do sistema operacioal.
+"""
  
 BASE_DIR = Path(__file__).resolve().parent.parent
 SQL_PATH = BASE_DIR / "data" / "tarefas.sql"
