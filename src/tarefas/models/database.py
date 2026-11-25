@@ -16,6 +16,7 @@ class Database:
         self.username = getenv('DB_USER')
         self.password = getenv('DB_PASSWORD')
         self.database = getenv('DB_SCHEMA')
+        self.port = getenv('DB_PORT') or 3306
         self.connection = None
         self.cursor = None
  
@@ -29,7 +30,8 @@ class Database:
                host = self.host,
                database = self.database,
                user = self.username,
-               password = self.password
+               password = self.password,
+               port = self.port
             )
  
             if self.connection.is_connected():
@@ -71,7 +73,6 @@ class Database:
             print(f'Erro de execução: {e}')
             return
  
-    #Método de entrada no contexto (para uso com `with`)
     def __enter__(self):
         self.conectar()
         return self
@@ -86,9 +87,10 @@ for utilizada. Esse caminho não depende do sistema operacioal.
  
 BASE_DIR = Path(__file__).resolve().parent.parent
 SQL_PATH = BASE_DIR / "data" / "tarefas.sql"
- 
+
+"""Função responsável por inicializar o schema (database) no banco de dados."""
 def init_db(sql_filepath=SQL_PATH):
-    """Função responsável por inicializar o schema (database) no banco de dados."""
+    
  
     load_dotenv()
  
@@ -114,12 +116,4 @@ def init_db(sql_filepath=SQL_PATH):
     except Error as e:
         print(f'Erro no banco de dados: {e}')
     except FileNotFoundError:
-        print('O arquivo especificado não pôde ser encontrado')
- 
-# Área 51 (Área de testes)
-"""Tudo o que for escrito dessa área será lido e executado como string"""
-#db = Database()
-#db.conectar()
-#print(db.executar('select * from tipo_combustivel;'))
-#db.desconectar()
- 
+        print('O arquivo especificado não pôde ser encontrado') 
